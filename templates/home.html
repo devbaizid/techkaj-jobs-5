@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<section style="background: linear-gradient(45deg, #13042f, #01ed34);" class=" text-gray-100 bg-center bg-no-repeat bg-cover "   >
+    <div class="container flex flex-col justify-center p-6 mx-auto sm:py-12 lg:py-24 lg:flex-row lg:justify-between">
+        <div class="flex flex-col justify-center p-6 text-center rounded-sm lg:max-w-md xl:max-w-lg lg:text-left">
+            <h1 class="text-5xl font-bold leadi sm:text-6xl">Techkaj-Job
+                <span class="text-violet-400">freelance Jobs </span> platform
+            </h1>
+            <p class="mt-6 mb-8 text-lg sm:mb-12">freelancing job hiring platform. Techkaj-Job provides 
+                <br class="hidden text-gray-100 md:inline lg:hidden">a seamless and efficient platform for connecting freelancers with
+                job opportunities worldwide.
+            </p>
+
+            <div
+                class="flex flex-col space-y-4 sm:items-center sm:justify-center sm:flex-row sm:space-y-0 sm:space-x-4 lg:justify-start">
+                <a rel="noopener noreferrer" href="{% url 'register' %}"
+                    class="px-8 py-3 text-lg font-semibold rounded bg-violet-400 text-gray-900">Start as freelancer</a>
+                <a rel="noopener noreferrer" href="{% url 'job_list' %}"
+                    class="px-8 py-3 text-lg font-semibold border rounded border-gray-100">Go Jobs</a>
+            </div>
+
+        </div>
+        <div class="flex items-center justify-center p-6 mt-8 lg:mt-0 h-72 sm:h-80 lg:h-96 xl:h-112 2xl:h-128">
+            <img src="https://res.cloudinary.com/dzgdrubmc/image/upload/v1692874247/recruitment-concept-illustration_23-2148642175-removebg_xkvp1t.png" alt=""
+                class="md:w-[500px]">
+        </div>
+    </div>
+</section>
+
+
+<section class="py-6 sm:py-12 bg-gray-800 text-gray-100">
+    <div class="container p-6 mx-auto space-y-8">
+        <div class="space-y-2 text-center">
+            <h2 class="text-5xl font-bold "><span class="text-violet-400">Recent </span> freelance Jobs</h2>
+       
+        </div>
+
+<div class="container  max-w-4xl px-2 py-2 mx-auto  rounded-lg shadow-sm ">
+  
+
+<fieldset class="w-full mb-1 space-y-1 text-gray-100">
+    <label for="Search" class="hidden">Search</label>
+    <form action="{% url 'job_list' %}" class="relative">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-2">
+            <button type="submit" title="search" class="p-1 focus:outline-none focus:ring">
+                <svg fill="currentColor" viewBox="0 0 512 512" class="w-4 h-4 text-gray-100">
+                    <path d="M479.6,399.716l-81.084-81.084-62.368-25.767A175.014,175.014,0,0,0,368,192c0-97.047-78.953-176-176-176S16,94.953,16,192,94.953,368,192,368a175.034,175.034,0,0,0,101.619-32.377l25.7,62.2L400.4,478.911a56,56,0,1,0,79.2-79.195ZM48,192c0-79.4,64.6-144,144-144s144,64.6,144,144S271.4,336,192,336,48,271.4,48,192ZM456.971,456.284a24.028,24.028,0,0,1-33.942,0l-76.572-76.572-23.894-57.835L380.4,345.771l76.573,76.572A24.028,24.028,0,0,1,456.971,456.284Z">
+                    </path>
+                </svg>
+            </button>
+        </span>
+        <input style="width: 100%;" type="text"   name="q"
+                    value="{{ request.GET.q }}"  placeholder="Search..."
+            class=" py-2 pl-10 text-sm rounded-md sm:w-auto focus:outline-none bg-gray-800 text-gray-100 focus:bg-gray-900 focus:border-violet-400">
+  
+        </form>
+
+
+</fieldset>
+
+
+<hr>
+</div>
+
+
+{% for job in page %}
+        <div class="bg-gray-800 text-gray-100">
+            <div class="container max-w-4xl px-10 py-6 mx-auto rounded-lg shadow-sm bg-gray-900">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-400">{{job.deadline}}</span>
+
+                    <a rel="noopener noreferrer" href="#"
+                        class="px-2 py-1 font-bold rounded bg-violet-400 text-gray-900"></a>
+                      
+                </div>
+                <div class="mt-3">
+                    <a rel="noopener noreferrer" href="{% url 'job_detail' job.id %}" class="text-2xl font-bold hover:underline">{{job.title}}</a>
+                    <p class="mt-2">{{ job.description|truncatechars:200 }}</p>
+                </div>
+                        <div class="flex items-center flex-wrap mt-3">
+                            {% for skill in job.skills.all %}
+                            <span style="font-size:10px ;"
+                                class="inline-block mb-2 bg-gray-600 text-white rounded-full px-3 py-1  font-semibold text-gray-700 mr-2 mb-2">
+                                {{ skill.name }}</span>
+                            {% endfor %}
+                        </div>
+
+                <div class="flex items-center justify-between mt-4">
+                    <a rel="noopener noreferrer" href="{% url 'job_detail' job.id %}" class="hover:underline text-violet-400">Read more</a>
+                    <div>
+                        <a rel="noopener noreferrer" href="#" class="flex items-center">
+
+                            <span class="hover:underline text-gray-400">Owner: {{job.owner}}</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+    <div class="flex justify-center space-x-1 dark:text-gray-100">
+        {% if page.has_previous %}
+        <a href="?page=1" title="first"
+            class="inline-flex items-center justify-center w-8 h-8 py-0 border rounded-md shadow-md dark:bg-gray-900 dark:border-gray-800">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+                stroke-linejoin="round" class="w-4">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </a>
+        <a href="?page={{ page.previous_page_number }}" title="previous"
+            class="inline-flex items-center justify-center w-8 h-8 py-0 border rounded-md shadow-md dark:bg-gray-900 dark:border-gray-800">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+                stroke-linejoin="round" class="w-4">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </a>
+        {% endif %}
+    
+        {% for num in page.paginator.page_range %}
+        <a href="?page={{ num }}"
+            class="inline-flex items-center justify-center w-8 h-8 text-sm font-semibold border rounded shadow-md dark:bg-gray-900 dark:text-violet-400 dark:border-violet-400"
+            title="Page {{ num }}">{{ num }}</a>
+        {% endfor %}
+    
+        {% if page.has_next %}
+        <a href="?page={{ page.next_page_number }}" title="next"
+            class="inline-flex items-center justify-center w-8 h-8 py-0 border rounded-md shadow-md dark:bg-gray-900 dark:border-gray-800">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+                stroke-linejoin="round" class="w-4">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </a>
+
+        <a href="?page={{ page.paginator.num_pages }}" title="last"
+            class="inline-flex items-center justify-center w-8 h-8 py-0 border rounded-md shadow-md dark:bg-gray-900 dark:border-gray-800">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+                stroke-linejoin="round" class="w-4">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </a>
+        {% endif %}
+    </div>
+
+
+        <!-- <div class="grid grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-2 lg:grid-cols-4">
+         {% for job in jobs%}
+            <article class="flex flex-col bg-gray-900">
+              
+                <div class="flex flex-col flex-1 p-4">
+                       
+                    <a  href="#" aria-label="{{job.title}}">
+
+                    <h3 class="flex-1 py-2  text-lg font-semibold leadi">{{job.title}}</h3>
+                    
+                    </a>
+
+                    <p class="mb-3 text-sm">{{job.description}}</p>
+
+                  
+                        <div class="flex items-center flex-wrap">
+                            {% for skill in job.skills.all %}
+                            <span
+                              style="font-size:10px ;"  class="inline-block mb-2 bg-gray-600 text-white rounded-full px-3 py-1  font-semibold text-gray-700 mr-2 mb-2">
+                                {{ skill.name }}</span>
+                            {% endfor %}
+                        </div>
+
+
+
+                <div style="float: right;" class="float-right  pt-3 space-x-2 text-xs text-gray-400">
+                    <span class="float-right  ">{{job.deadline}}</span>
+                </div>
+                </div>
+            </article>
+            {% endfor %}
+     
+        </div> -->
+    </div>
+</section>
+{% endblock %}

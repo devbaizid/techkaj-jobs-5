@@ -1,0 +1,337 @@
+{% extends 'base.html' %}
+{% load guest_user %}
+
+{% block title %}
+{{job.title}}
+{% endblock %}
+
+{% block content %}
+<meta name="title" content="tachkaj-job,, {{ job.title}}">
+<meta name="description" content="{{ job.description}}">
+<meta name="keywords" content="tachkaj-job,jobs">
+<meta name="robots" content="index, follow">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="language" content="English">
+
+
+{% if user|is_guest_user %}
+
+<div id="myModal" class="fixed inset-0 flex items-center justify-center z-50">
+	<div class="bg-white md:w-[50%] p-6 rounded shadow">
+		<button id="closeModal" class="float-right top-2 right-2 text-gray-600 hover:text-gray-800 focus:outline-none">
+			<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+			</svg>
+		</button>
+
+		<svg class="h-6 w-6 text-blue-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+				d="M12 9v2m0 4h.01m-6.938 4h13.856c.797 0 1.44-.69 1.44-1.544V7.544C20.31 6.69 19.667 6 18.87 6H5.13C4.333 6 3.69 6.69 3.69 7.544v13.912c0 .854.643 1.544 1.44 1.544z">
+			</path>
+		</svg>
+		<hr />
+
+		<h2 class="text-3xl font-bold mb-4  mt-1">
+			You are Guest ,, You Need Account
+		</h2>
+
+
+
+
+		<a href="{% url 'login' %}"
+			class="bg-blue-500 hover:bg-green-600 mb-3 text-white font-bold py-2 px-4 rounded block text-center">Login</a>
+		<hr />
+
+<a href="{% url 'register' %}"
+	class="bg-gray-900 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded block text-center">Sign up </a>
+
+	
+
+		<a href="{% url "guest_user_convert" %}"
+			class="bg-blue-900 hover:bg-green-600 mt-3 text-white font-bold py-2 px-4 rounded block text-center">Sign up and
+			save Guest user </a>
+
+
+		<hr>
+
+		<p class="text-gray-700 mt-5 text-red-700" style="font-size: 13px;">
+			Before close the window save you data , if you are not
+			saving your data ,, when you go for new tab your data will
+			be lose couse you are Guet user
+		</p>
+
+
+	</div>
+</div>
+
+<style>
+	#myModal {
+		display: none;
+	}
+</style>
+
+<script>
+	// Open the modal
+	function openModal() {
+		document.getElementById("myModal").style.display = "flex";
+	}
+
+	// Close the modal
+	function closeModal() {
+		document.getElementById("myModal").style.display = "none";
+	}
+
+	// Attach event listener to close button
+	document
+		.getElementById("closeModal")
+		.addEventListener("click", closeModal);
+
+	// Show the modal when the page loads
+	window.addEventListener("DOMContentLoaded", openModal);
+</script>
+
+{% else %}
+{% endif %}
+
+
+<div class="max-w-5xl px-6 py-16 mx-auto space-y-12 bg-gray-200">
+	<article class="space-y-8  text-gray-800">
+		<div class="space-y-6">
+			<a href="{% url 'job_list'%}" class="bg-gray-500 p-2 rounded text-white">Back</a>
+			<h1 class="text-4xl font-bold md:tracki md:text-4xl">{{ job.title }}</h1>
+			<div class="flex flex-col items-start justify-between w-full md:flex-row md:items-center dark:text-gray-400">
+				<div class="flex items-center md:space-x-2">
+					<p class="text-1xl font-bold ml-3">{{job.owner.username}} • {{ job.deadline }}</p>
+				</div>
+				<p class="flex-shrink-0 mt-3 text-sm md:mt-0"> </p>
+			</div>
+		</div>
+		<br>
+		<strong >Budget: <span class="text-yellow-800">$</span>{{ job.Price }}</strong>
+		<div class="flex flex-wrap py-6 space-x-2 border-t border-dashed dark:border-gray-400">
+			<strong>Skills:</strong>
+			{% for skill in job.skills.all %}
+			<span class="inline-block mb-2 bg-gray-900 rounded-full px-3 py-1 text-sm font-semibold text-gray-100 mr-2 "> {{ skill.name }}</span>
+		  {% endfor %}
+		</div>
+		<strong>Description:</strong><br>
+		<span>		{{ job.description | safe }}
+		</span>
+
+
+	</article>
+	<hr>
+
+
+
+	
+ 
+
+{% if not job.owner == request.user %}
+<strong>Apply for this {{job.title}} Job</strong>
+
+	{% if is_applied %}
+	<p>You have already applied for this job.</p>
+<br>
+	{% if messages %}
+    {% for message in messages %}
+        <div class="bg-blue-500   text-gray-200 p-2 rounded-full mt-2 mb-4">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+	{% else %}
+
+
+	<form method="post" if="fileForm" enctype="multipart/form-data">
+			{% if form.errors %}
+			<div class="alert">
+				<p class="bg-red-500 text-white p-3 mt-3 mb-4">There are errors in the form:</p>
+				<ul class="bg-red-100 text-red-700 p-3 mb-4">
+					{% for field, errors in form.errors.items %}
+					<li>{{ field|title }}: {{ errors|join:", " }}</li>
+					{% endfor %}
+				</ul>
+			</div>
+			{% endif %}
+
+		{% csrf_token %}
+		{{ form.as_p }}
+		<hr>
+		<br>
+		<input type="submit" id="submitButton" class="float-right block mt-4 inline-flex items-center bg-gray-900 border-0 py-1 px-3 focus:outline-none  rounded text-base text-gray-100 mt-4 md:mt-0" value="Apply Now">
+	</form>
+
+<div id="loadingOverlay"
+	class="hidden fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50">
+	<div class="spinner-border text-white" role="status">
+		<span class="sr-only">Loading...</span>
+	</div>
+</div>
+
+<script>
+
+
+	  const form = document.getElementById('fileForm');
+		const submitButton = document.getElementById('submitButton');
+		const loadingOverlay = document.getElementById('loadingOverlay');
+
+		form.addEventListener('submit', (event) => {
+			event.preventDefault();
+			submitButton.disabled = true;
+			loadingOverlay.classList.remove('hidden');
+
+			// Perform the form submission using JavaScript Fetch API or form submission logic
+			// For example, you can use Fetch API to submit the form data:
+			fetch(form.action, {
+				method: 'POST',
+				body: new FormData(form),
+			})
+				.then(response => response.json())
+				.then(data => {
+					// Handle the form submission response as needed
+					// For example, you can redirect to a success page or display a success message
+					// after the form is successfully submitted
+					console.log(data);
+					window.location.href = '/success'; // Replace with your success page URL
+				})
+				.catch(error => {
+					// Handle errors, display an error message, or re-enable the submit button
+					console.error('Error:', error);
+					submitButton.disabled = false;
+					loadingOverlay.classList.add('hidden');
+				});
+		});
+
+</script>
+
+	{% endif %}
+
+
+{% endif %}
+
+{% for proposal in proposals %}
+  {% if proposal.freelancer == request.user %}
+
+
+
+  <div class="max-w-lg p-6  border border-gray-800 rounded-lg shadow ">
+  
+
+	<div class="flex flex-col items-start justify-between w-full md:flex-row md:items-center dark:text-gray-400">
+		<div class="flex items-center md:space-x-2">
+			<p class="text-sm"><strong class="text-gray-900">   {% if user|is_guest_user %} Guest User  {% else %}{{proposal.freelancer.username}}  {% endif %}</strong> • {{proposal.created_date}}</p>
+		</div>
+		<p class="flex-shrink-0 mt-3 text-sm md:mt-0">  </p>
+	</div>
+	<p class="mt-3">Proposal: <span class="bg-blue-500 p-1 text-white  rounded-lg shadow ">{{proposal.status}} </span> </p>
+	
+	<p class="mt-3"><strong>Bid Amount : {% if proposal.bid_amount %}$ {{proposal.bid_amount}} {% endif %}</strong></p>
+<hr>
+
+<p><strong>Cover letter : </strong></p>
+<p>{{proposal.cover_letter}}</p>
+
+<p> <strong>Resume:</strong></p>
+
+{% if proposal.cv_file %}
+<a href="{{proposal.cv_file.url}}"  class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">View Resume</a>
+{% endif %}
+
+<hr>
+<br>
+<a href="{% url 'update_proposal' proposal.id %}" class="block text-white bg-gray-900 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" >Edit Proposal</a>
+</div>
+  
+
+
+    
+  {% endif %}
+{% endfor %}
+
+
+{% if job.owner == request.user %}
+
+{% if proposals %}
+<h3>Proposals:</h3>
+{% for proposal in proposals %}
+
+
+
+ 
+  
+
+<div class="max-w-lg p-6  border border-gray-800 rounded-lg shadow ">
+  
+
+		<div class="flex flex-col items-start justify-between w-full md:flex-row md:items-center dark:text-gray-400">
+			<div class="flex items-center md:space-x-2">
+				<img src="https://res.cloudinary.com/dzgdrubmc/image/upload/v1688968808/media/default/avatar.png" alt="" class="w-10 h-10 border rounded-full dark:bg-gray-500 dark:border-gray-700">
+				<p class="text-sm"><strong class="text-gray-900">{% if proposal.name %} {{proposal.name}} {% endif %}  </strong> • {{proposal.created_date}}</p>
+			</div>
+		</div>
+		  <!-- Modal body -->
+		  <div class="p-6 space-y-6">
+			<p class="text-base leading-relaxed   ">
+			  <strong class=" ">Cover Letter:</strong> <br>
+			{% if proposal.cover_letter %}
+			  {{proposal.cover_letter}}
+{% endif %}
+
+		  </p>
+
+
+		  <p class="text-base leading-relaxed   ">
+			  <strong class=" ">CV Resume:</strong> <br>
+				<br>
+				{% if proposal.cv_file %}
+			  <a href="{{proposal.cv_file.url}}" class="  text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">View Resume</a>
+{% endif %}
+
+			  <br> <br>
+			  <strong>Bid Amount</strong>
+			  {% if proposal.bid_amount %}
+			  <p><strong>$</strong> {{proposal.bid_amount}}</p>
+			  {% endif %}
+		  </p>
+		  
+		  
+		</div>
+    
+		<div class=" p-6  dark:border-gray-600">
+			<p class="mb-3">				<strong>Proposal status <span class="bg-blue-500 p-1 text-white  rounded-lg shadow ">{{proposal.status}} </span>  settings</strong>
+			</p>
+		
+			<div class="flex  space-x-2 items-center">
+			
+			</div>
+			</div>
+		
+</div>
+
+
+{% endfor %}
+{% else %}
+<p>No proposals found for this job.</p>
+{% endif %}
+{% endif %}
+
+
+	<div>
+		
+
+	</div>
+</div>
+
+
+{% endblock %}
+
+
+
+
+
+
+
+

@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Service 
+{% endblock %}
+{% block content %}
+
+{{ body_html_data.content | safe }}
+
+{% for c in body_html_data %}
+{{ c.content | safe }}
+
+{% endfor %}
+
+<div class="bg-gray-900 lg:flex lg:h-40 lg:items-center max-w-screen-xl mx-auto px-4 py-32">
+    <div class="max-w-3xl mx-auto text-center">
+        <h1 class="text-4xl text-white font-bold mb-2">Jobs </h1>
+
+        <p class="text-white"> Tachkaj-Job, developed by Tachkaj.com, is a leading job platform that connects job
+            seekers with employers, offering a multitude of freelance employment opportunities. It provides a
+            comprehensive platform More
+        </p>
+
+        <div class="flex flex-wrap gap-4 justify-center mt-8"><a
+                class="block w-full rounded border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-white focus:outline-none focus:ring active:text-opacity-75 sm:w-auto"
+                href="{% url 'job_list' %}">Get Started With Jobs </a></div>
+    </div>
+</div>
+
+<section class="py-6 sm:py-12 bg-gray-800 text-gray-100">
+    <div class="container p-6 mx-auto space-y-8">
+        <div class="space-y-2 text-center">
+            <h2 class="text-4xl font-bold mb-4 mt-4  ">Our Services</h2>
+        </div>
+        <div id="article-list" class="grid grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-2 lg:grid-cols-4">
+            <!-- Fetched articles will be added here -->
+        </div>
+    </div>
+</section>
+
+<script>
+    const articleList = document.getElementById("article-list");
+
+    const apiUrl = "https://flightbes.info/api/service";
+
+    fetch(apiUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Network response was not ok. Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            data.forEach(article => {
+                const articleElement = document.createElement("article");
+                articleElement.className = "flex flex-col bg-gray-900";
+
+                const aElement = document.createElement("a");
+                aElement.href = article.link; // Assuming the API response has a "link" property
+                aElement.rel = "noopener noreferrer";
+                aElement.setAttribute("aria-label", "Te nulla oportere reprimique his dolorum");
+
+                const imgElement = document.createElement("img");
+                imgElement.alt = "";
+                imgElement.className = "object-cover w-full h-52 bg-gray-500";
+                imgElement.src = article.image.url; // Assuming the API response has an "image" property
+
+                aElement.appendChild(imgElement);
+                articleElement.appendChild(aElement);
+
+                const divElement = document.createElement("div");
+                divElement.className = "flex flex-col flex-1 p-6";
+
+                const linkElement = document.createElement("a");
+               
+                linkElement.rel = "noopener noreferrer";
+                linkElement.className = "text-xs tracki uppercase hover:underline text-violet-400";
+                linkElement.textContent = article.category;
+
+                const h3Element = document.createElement("h3");
+                h3Element.className = "flex-1 py-2 text-lg font-semibold leadi";
+
+                const titleLinkElement = document.createElement("a"); // Anchor for the title
+                titleLinkElement.href = "https://techkaj.com/service-details/" + article.slug; // Assuming the API response has a "link" property
+               titleLinkElement.target = "_blank";
+                titleLinkElement.rel = "noopener noreferrer";
+                titleLinkElement.textContent = article.title; // Assuming the API response has a "title" property
+                h3Element.appendChild(titleLinkElement);
+
+           
+                divElement.appendChild(linkElement);
+                divElement.appendChild(h3Element);
+
+                articleElement.appendChild(divElement);
+                articleList.appendChild(articleElement);
+            });
+        })
+        .catch(error => {
+            console.error("Error fetching data:", error);
+            const errorMessage = document.createElement("div");
+            errorMessage.textContent = "An error occurred while fetching data.";
+            articleList.appendChild(errorMessage);
+        });
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,243 @@
+{% extends 'base.html' %} {% load guest_user %} {% block title %} Job list
+{% endblock %} {% block content %}
+
+
+<section class=" body-font bg-gray-800">
+ 
+  <div class="container md:px-5 md:py-24 mx-auto">
+
+      <div class=" text-center">
+        <h2 class="text-5xl font-bold  md:mt-[-50px] mb-10 text-white"><span class="text-violet-400">Find your </span> freelance Job</h2>
+      
+      </div>
+
+    <div class="flex flex-wrap -m-4">
+      <div class="p-4 md:w-1/3 sm:w-[100%] w-[100%]">
+        <div
+          class="h-full bg-gray-900 border-none  rounded-lg overflow-hidden"
+        >
+          <div class="p-6">
+            <form action="{% url 'job_list' %}">
+              <div class="flex items-center">
+                <label for="simple-search" class="sr-only">Search</label>
+                <div class="relative w-full">
+                  <div
+                    class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+                  >
+                    <button type="submit" title="search" class="p-1 focus:outline-none focus:ring">
+                    <svg
+                      aria-hidden="true"
+                      class="w-5 h-5"
+                      fill="white"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                        clip-rule="evenodd"
+                      ></path>
+                    </svg>
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    id="simple-search"
+                 style="width: 100%;"
+                    name="q"
+                    value="{{ request.GET.q }}"
+                    class="py-2 pl-10 text-sm rounded-md sm:w-auto focus:outline-none bg-gray-800 text-gray-100 focus:bg-gray-900 focus:border-violet-400"
+                    placeholder="Search"
+                    required
+                  />
+                  
+                </div>
+
+           
+              </div>
+
+              <hr class="mt-1" />
+
+              <p class="mt-4 mb-4 text-white">
+                <strong>Filter <small>option</small></strong>
+              </p>
+              {% for skill in all_skills %}
+
+              <div class="flex items-center mb-4">
+                <input
+                  id="default-checkbox"
+                  type="checkbox"
+                  name="skills"
+                  value="{{ skill.id }}"
+                  class="w-4 h-4 text-blue-600  border-gray-300 rounded focus:ring-blue-500 focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600"
+                />
+                <label
+                  for="default-checkbox"
+                  value="{{ skill.id }}"
+                  class="ml-2 text-sm font-medium text-white"
+                  >{{ skill.name }}</label
+                >
+              </div>
+
+              {% endfor %}
+
+              <strong class="text-white">Bargain <small>option</small></strong>
+              <div class="flex items-center mb-4">
+                <input
+                  type="number"
+                  name="price_min"
+                  class="p-2 w-40"
+                  placeholder="Min Price"
+                  value="{{ request.GET.price_min }}"
+                />
+                <input
+                  type="number"
+                  name="price_max"
+                  class="p-2 ml-1 w-40"
+                  placeholder="Max Price"
+                  value="{{ request.GET.price_max }}"
+                />
+              </div>
+
+
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4  md:w-1/2">
+        {% if jobs %} {% for job in page %}
+        <div
+          class="mb-2 border   px-3 py-3 bg-gray-900 border-1 border-none  w-full rounded-lg overflow-hidden"
+        >
+                         <p class="float-right"><span class="text-sm text-gray-400">{{job.deadline}}</span></p>  
+
+          <div class="p-6">
+          
+
+            <h1
+              class="title-font text-lg  mb-4 text-green-600 font-bold "
+            >
+              <a href="{% url 'job_detail' job.id %}">{{ job.title }}</a>
+            </h1>
+                    <p style="font-size: 13px;" class="mt-2 text-white mt-2 mb-2">{{ job.description|truncatechars:100 }}</p>
+
+          
+
+            <div class="flex items-center flex-wrap">
+              {% for skill in job.skills.all %}
+              <span
+                class="inline-block mb-2 bg-gray-600 text-white rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
+              >
+                {{ skill.name }}</span
+              >
+              {% endfor %}
+            </div>
+   
+            
+
+<div class="mb-2 mt-2 text-white">
+    Price: <strong class="text-yellow-800">$</strong>  <span class="font-bold"> {{ job.Price }}</span>
+</div>
+
+
+      
+          </div>
+
+          <div class="float-right">
+            <span class=" text-sm text-gray-400">
+              Owner {{job.owner.username}}
+            </span>
+          
+          
+          </div>
+        </div> 
+
+
+
+
+        {% endfor %} {% else %}
+    
+
+        <section class="flex items-center h-full sm:p-16 bg-gray-900 text-gray-100">
+          <div class="container flex flex-col items-center justify-center px-5 mx-auto my-8 space-y-8 text-center sm:max-w-md">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-40 h-40 text-gray-600">
+              <path fill="currentColor"
+                d="M256,16C123.452,16,16,123.452,16,256S123.452,496,256,496,496,388.548,496,256,388.548,16,256,16ZM403.078,403.078a207.253,207.253,0,1,1,44.589-66.125A207.332,207.332,0,0,1,403.078,403.078Z">
+              </path>
+              <rect width="176" height="32" x="168" y="320" fill="currentColor"></rect>
+              <polygon fill="currentColor"
+                points="210.63 228.042 186.588 206.671 207.958 182.63 184.042 161.37 162.671 185.412 138.63 164.042 117.37 187.958 141.412 209.329 120.042 233.37 143.958 254.63 165.329 230.588 189.37 251.958 210.63 228.042">
+              </polygon>
+              <polygon fill="currentColor"
+                points="383.958 182.63 360.042 161.37 338.671 185.412 314.63 164.042 293.37 187.958 317.412 209.329 296.042 233.37 319.958 254.63 341.329 230.588 365.37 251.958 386.63 228.042 362.588 206.671 383.958 182.63">
+              </polygon>
+            </svg>
+            <p class="text-3xl">No search results found</p>
+           
+          </div>
+        </section>
+        {% endif %}
+
+
+        <div class="flex justify-center mt-4 space-x-1 text-white">
+          {% if page.has_previous %}
+          <a href="?page=1" title="first"
+            class="inline-flex items-center justify-center w-8 h-8 py-0 border rounded-md shadow-md bg-gray-900 border-gray-800">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+              stroke-linejoin="round" class="w-4">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </a>
+          <a href="?page={{ page.previous_page_number }}" title="previous"
+            class="inline-flex items-center justify-center w-8 h-8 py-0 border rounded-md shadow-md bg-gray-900 border-gray-800">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+              stroke-linejoin="round" class="w-4">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </a>
+          {% endif %}
+        
+          {% for num in page.paginator.page_range %}
+          <a href="?page={{ num }}"
+            class="inline-flex items-center justify-center w-8 h-8 text-sm font-semibold border rounded shadow-md bg-gray-900 text-violet-400 border-violet-400"
+            title="Page {{ num }}">{{ num }}</a>
+          {% endfor %}
+        
+          {% if page.has_next %}
+          <a href="?page={{ page.next_page_number }}" title="next"
+            class="inline-flex items-center justify-center w-8 h-8 py-0 border rounded-md shadow-md bg-gray-900 border-gray-800">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+              stroke-linejoin="round" class="w-4">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </a>
+        
+          <a href="?page={{ page.paginator.num_pages }}" title="last"
+            class="inline-flex items-center justify-center w-8 h-8 py-0 border rounded-md shadow-md bg-gray-900 border-gray-800">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+              stroke-linejoin="round" class="w-4">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </a>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 
+{% for job in jobs %}
+  <div class="job">
+    <h2>{{ job.title }}</h2>
+    <p>{{ job.description }}</p>
+    <p>Budget: ${{ job.budget }}</p>
+    <p>Deadline: {{ job.deadline }}</p>
+    <p>Owner: {{ job.owner.username }}</p>
+    <a href="{% url 'job_detail' job.id %}">View Details</a>
+  </div>
+{% endfor %} -->
+
+{% endblock %}
