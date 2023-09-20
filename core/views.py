@@ -85,8 +85,7 @@ def job_detail(request, job_id):
             messages.success(request, f"Your proposal has been sent successfully. ,, You will get update soon to Email {proposal.email}")
             subject = f"{proposal.name} sent a  Proposal  for {job.title} Techkaj-job"
             date_time_x = timezone.now()
-            html_message = render_to_string('me_email.html', {'item':proposal,"date_time_x":date_time_x})
-            message = strip_tags(html_message)
+            message = f"{proposal.name} sent a  Proposal  for {job.title} Techkaj-job"
             email_list = email_for_send_message.objects.all()
             recipient_list = []
             for ix in email_list:
@@ -99,7 +98,6 @@ def job_detail(request, job_id):
             settings.FROM_EMAIL,
             recipient_list,
             fail_silently=False,
-            html_message=html_message,
             )
             return redirect('dashboard')  # Replace 'success_url' with your desired success page URL
 
