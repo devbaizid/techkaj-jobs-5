@@ -146,10 +146,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.ionos.com'
+EMAIL_HOST = "smtp.mailgun.org"
 EMAIL_PORT = 587  # Remove the comma after the port number
-EMAIL_HOST_USER = 'service@techkaj.com'
-EMAIL_HOST_PASSWORD = 'upoma123A!'
+EMAIL_HOST_USER = "postmaster@mail.techkaj.info"
+EMAIL_HOST_PASSWORD = 'e6d60fa68cb4e6af9d950efc6026d72e-f0e50a42-ed368ccd'
 EMAIL_USE_TLS = True
 
 
